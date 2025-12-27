@@ -27,7 +27,7 @@ Reusable GitHub Action to setup frontend projects.
 ## Usage
 
 ```yaml
-- uses: santiago-garrote/setup-frontend@v1
+- uses: santiago-garrote/setup-frontend@vX
   with:
     node-version: 20
     pnpm-version: 10
