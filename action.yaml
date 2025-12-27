@@ -1,0 +1,54 @@
+name: Setup Node Project
+
+description: Setup project environment with Node.js and optional pnpm support
+
+inputs:
+  node-version:
+    description: Node.js version
+    required: false
+    default: "20"
+
+  pnpm-version:
+    description: pnpm version (empty to skip pnpm setup)
+    required: false
+    default: "10"
+
+  working-directory:
+    description: Frontend working directory
+    required: false
+    default: "."
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: pnpm
+        cache-dependency-path: ${{ inputs.working-directory }}/pnpm-lock.yaml
+
+    - name: Setup pnpm
+      if: ${{ inputs.pnpm-version != '' }}
+      uses: pnpm/action-setup@v3
+      with:
+        version: ${{ inputs.pnpm-version }}
+        run_install: false
+
+    - name: Install dependencies
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        if [ -f "pnpm-lock.yaml" ]; then
+          pnpm install --frozen-lockfile
+        elif [ -f "package-lock.json" ]; then
+          npm ci
+        elif [ -f "yarn.lock" ]; then
+          yarn install --frozen-lockfile
+        else
+          npm install
+        fi
+      shell: bash
+
