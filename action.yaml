@@ -29,6 +29,5 @@ runs:
         version: 9
 
     - name: Install dependencies
-      working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: pnpm install --frozen-lockfile
