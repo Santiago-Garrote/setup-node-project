@@ -35,4 +35,18 @@ runs:
     - name: Install dependencies
       shell: bash
       working-directory: ${{ inputs.working-directory }}
-      run: pnpm install --frozen-lockfile
+      run: |
+        # Show debug info only when debug logging is enabled
+        if [ "${ACTIONS_RUNNER_DEBUG}" == "true" ]; then
+          echo "::debug::Running pnpm install in: $(pwd)"
+          echo "::debug::Folder structure:"
+          if command -v tree &> /dev/null; then
+            tree -a -L 3
+          else
+            echo "tree command not found, listing with ls:"
+            ls -R | head -n 50
+          fi
+        fi
+
+        # Run install
+        pnpm install --frozen-lockfile
